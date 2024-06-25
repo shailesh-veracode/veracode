@@ -6,12 +6,13 @@ veracode_static_scan:
     branches_to_exclude:
       - branch-1
   pull_request:
-    trigger: false
+    trigger: true
     action:
       - opened
+      - synchronize
     target_branch:
       - master
-  analysis_on_platform: true
+  analysis_on_platform: false
   break_build_policy_findings: false
   break_build_invalid_policy: false
   break_build_on_error: true
