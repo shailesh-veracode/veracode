@@ -46,7 +46,7 @@ veracode_sca_scan:
       - Veracode SCA Scan
 veracode_iac_secrets_scan:
   push:
-    trigger: true
+    trigger: false
     branches_to_run:
       - '*'
     branches_to_exclude:
