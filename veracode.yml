@@ -2,7 +2,7 @@ veracode_static_scan:
   push:
     trigger: false
     branches_to_run:
-      - js-dynamic
+      - "*"
     branches_to_exclude:
       - branch-1
   pull_request:
