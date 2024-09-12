@@ -4,8 +4,8 @@ actions:
     bundle: 2.5.16
   veracode_static_scan:
     build:
-      runs_on: 
-      packager_image: 
+      runs_on: "['ubuntu-latest']"
+      packager_image: veracode/scm-packaging:3.0.0
       predependency_command: |
       
 veracode_static_scan:
