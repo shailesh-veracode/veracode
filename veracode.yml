@@ -1,12 +1,3 @@
-actions:
-  ruby:
-    version: 3.3.3
-    bundle: 2.5.16
-  veracode_static_scan:
-    build:
-      runs_on: "['mounikakothuru-mac']"
-      packager_image: veracode/scm-packaging:3.0.0
-      #predependency_command: |
 veracode_static_scan:
   push:
     trigger: true
