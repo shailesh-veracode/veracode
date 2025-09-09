@@ -170,6 +170,7 @@ jobs:
         BREAK_BUILD_ON_ERROR: ${{ inputs.break_build_on_error }}
        run: |
             success_count=0
+            conclusion="success"
             # Convert JSON string to a proper format for jq processing
             echo '${{ toJSON(needs) }}' | jq -c 'to_entries[]' | while read -r job; do
               status=$(echo "$job" | jq -r '.value.result')
@@ -180,21 +181,20 @@ jobs:
               elif [ "$status" = "failure" ]; then
                 if [ "$BREAK_BUILD_ON_ERROR" = "false" ]; then
                   echo "No break the build on error - need checks update"
-                  echo '{"status": "completed", "conclusion": "success"}' > payload.txt
-                  curl -X PATCH \
-                    -H "Authorization: Bearer ${{ inputs.token }}" \
-                    -H "Accept: application/vnd.github+json" \
-                    https://api.github.com/repos/${{ inputs.owner }}/${{ inputs.repo }}/check-runs/${{ inputs.check_run_id }} \
-                    -d @"payload.txt"
+                  conclusion="success"
                 else
                   echo "Jobs failed - need checks update"
-                  echo '{"status": "completed", "conclusion": "failure"}' > payload.txt
-                  curl -X PATCH \
-                    -H "Authorization: Bearer ${{ inputs.token }}" \
-                    -H "Accept: application/vnd.github+json" \
-                    https://api.github.com/repos/${{ inputs.owner }}/${{ inputs.repo }}/check-runs/${{ inputs.check_run_id }} \
-                    -d @"payload.txt"
+                  conclusion="success"
                 fi
               fi
             done
+
+            echo "{\"status\": \"completed\", \"conclusion\": \"$conclusion\"}" > payload.txt
+
+            # Single curl request
+            curl -X PATCH \
+              -H "Authorization: Bearer ${{ inputs.token }}" \
+              -H "Accept: application/vnd.github+json" \
+              https://api.github.com/repos/${{ inputs.owner }}/${{ inputs.repo }}/check-runs/${{ inputs.check_run_id }} \
+              -d @"payload.txt"
       
