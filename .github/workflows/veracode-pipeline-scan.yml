@@ -184,7 +184,7 @@ jobs:
                   conclusion="success"
                 else
                   echo "Jobs failed - need checks update"
-                  conclusion="success"
+                  conclusion="failure"
                 fi
               fi
             done
