@@ -172,22 +172,20 @@ jobs:
             success_count=0
             conclusion="failure"
             # Convert JSON string to a proper format for jq processing
-            echo '${{ toJSON(needs) }}' | jq -c 'to_entries[]' | while read -r job; do
+            while read -r job; do
               status=$(echo "$job" | jq -r '.value.result')
-        
+              echo "Found job with status: $status"
+            
               if [ "$status" = "success" ]; then
-                echo "Job success no need to update"
                 success_count=$((success_count + 1))
               elif [ "$status" = "failure" ]; then
-                if [ "$BREAK_BUILD_ON_ERROR" = "true" ]; then
-                  echo "Break the build on error - need checks update"
-                  conclusion="failure"
-                else
-                  echo "Jobs failed - need checks update"
+                if [ "$BREAK_BUILD_ON_ERROR" = "false" ]; then
                   conclusion="success"
+                else
+                  conclusion="failure"
                 fi
               fi
-            done
+            done <<< "$(echo ${{ toJSON(needs) }} | jq -c 'to_entries[]')"
 
             echo "{\"status\": \"completed\", \"conclusion\": \"$conclusion\"}" > payload.txt
             cat payload.txt
