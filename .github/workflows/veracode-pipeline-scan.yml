@@ -179,9 +179,9 @@ jobs:
                 echo "Job success no need to update"
                 success_count=$((success_count + 1))
               elif [ "$status" = "failure" ]; then
-                if [ "$BREAK_BUILD_ON_ERROR" = "false" ]; then
-                  echo "No break the build on error - need checks update"
-                  conclusion="success"
+                if [ "$BREAK_BUILD_ON_ERROR" = "true" ]; then
+                  echo "Break the build on error - need checks update"
+                  conclusion="failure"
                 else
                   echo "Jobs failed - need checks update"
                   conclusion="failure"
@@ -190,7 +190,7 @@ jobs:
             done
 
             echo "{\"status\": \"completed\", \"conclusion\": \"$conclusion\"}" > payload.txt
-
+            cat payload.txt
             # Single curl request
             curl -X PATCH \
               -H "Authorization: Bearer ${{ inputs.token }}" \
